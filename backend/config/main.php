@@ -61,7 +61,10 @@ return [
                 // OPTIONS preflight uchun
                 'OPTIONS <url:.*>' => 'site/options',
                 ''=>'site/index',
-                'home'=>'home/<language:[w-]+>',
+                'GET home/<language:[\w-]+>' => 'site/home',
+                'GET category/<language:[\w-]+>' => 'site/category',
+                'GET navigation/<language:[\w-]+>' => 'site/navigation',
+                'GET articles/<language:[\w-]+>/<slug:[\w-]+>' => 'site/article',
                 'GET v1/getfile/<slug:[\w-]+>' => 'site/file',
                 'POST v1/admin-auth/login' => 'v1/admin-auth/login',
                 'POST v1/admin-auth/refresh' => 'v1/admin-auth/refresh',

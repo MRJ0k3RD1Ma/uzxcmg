@@ -178,4 +178,47 @@ class Article extends ActiveRecord
     {
         $this->updateCounters(['show_counter' => 1]);
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        
+        // Navigation template ni yangilash
+        $this->updateNavigationTemplate();
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        
+        // Navigation template ni yangilash
+        $this->updateNavigationTemplate();
+    }
+
+    /**
+     * Navigation template ni yangilash
+     * Agar navigationga tegishli articlelar soni 0 yoki 1 bo'lsa - SINGLE
+     * Agar 1 dan ko'p bo'lsa - LIST
+     */
+    private function updateNavigationTemplate()
+    {
+        if ($this->navigation) {
+            $articlesCount = self::find()
+                ->where([
+                    'navigation_id' => $this->navigation_id,
+                    'status' => self::STATUS_ACTIVE
+                ])
+                ->count();
+
+            $newTemplate = ($articlesCount <= 1) 
+                ? Navigation::TEMPLATE_SINGLE 
+                : Navigation::TEMPLATE_LIST;
+
+            if ($this->navigation->template !== $newTemplate) {
+                $this->navigation->template = $newTemplate;
+                $this->navigation->save(false);
+            }
+        }
+    }
 }
+
