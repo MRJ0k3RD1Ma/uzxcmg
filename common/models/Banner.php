@@ -8,32 +8,29 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 
 /**
- * ProductImage model
+ * Banner model
  *
  * @property int $id
- * @property int $product_id
+ * @property int $language_id
  * @property int $image_id
- * @property string $alt_text
- * @property int $sort_order
- * @property int $is_primary
+ * @property string $name
+ * @property string $description
+ * @property string $button
+ * @property int $status
  * @property string $created
  * @property string $updated
- * @property int $status
  *
- * @property Product $product
+ * @property Language $language
  * @property File $image
  */
-class ProductImage extends ActiveRecord
+class Banner extends ActiveRecord
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
-    const IS_PRIMARY_NO = 0;
-    const IS_PRIMARY_YES = 1;
-
     public static function tableName()
     {
-        return '{{%product_image}}';
+        return '{{%banner}}';
     }
 
     public function behaviors()
@@ -51,15 +48,14 @@ class ProductImage extends ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'image_id'], 'required'],
-            [['product_id', 'image_id', 'sort_order', 'is_primary', 'status'], 'integer'],
-            [['alt_text'], 'string', 'max' => 255],
+            [['language_id'], 'required'],
+            [['name'], 'string', 'max' => 255],
+            [['description'], 'string'],
+            [['language_id', 'image_id', 'status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['sort_order', 'default', 'value' => 0],
-            ['is_primary', 'default', 'value' => self::IS_PRIMARY_NO],
             ['status', 'in', 'range' => [self::STATUS_INACTIVE, self::STATUS_ACTIVE]],
-            ['is_primary', 'in', 'range' => [self::IS_PRIMARY_NO, self::IS_PRIMARY_YES]],
-            ['product_id', 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            ['button', 'safe'],
+            ['language_id', 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
             ['image_id', 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['image_id' => 'id']],
         ];
     }
@@ -68,11 +64,11 @@ class ProductImage extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'product_id' => 'Mahsulot',
+            'name' => 'Nomi',
+            'description' => 'Tavsif',
+            'button' => 'Tugma',
+            'language_id' => 'Til',
             'image_id' => 'Rasm',
-            'alt_text' => 'Alt matn',
-            'sort_order' => 'Tartib',
-            'is_primary' => 'Asosiy rasm',
             'status' => 'Status',
             'created' => 'Yaratilgan',
             'updated' => 'Yangilangan',
@@ -83,7 +79,7 @@ class ProductImage extends ActiveRecord
     {
         $fields = parent::fields();
 
-        unset($fields['created'], $fields['updated'], $fields['image_id']);
+        unset($fields['created'], $fields['updated'], $fields['language_id'], $fields['image_id']);
         $fields['created_at'] = 'created';
         $fields['updated_at'] = 'updated';
 
@@ -91,8 +87,16 @@ class ProductImage extends ActiveRecord
             return $this->status == self::STATUS_ACTIVE ? 'ACTIVE' : 'INACTIVE';
         };
 
-        $fields['is_primary'] = function () {
-            return (bool)$this->is_primary;
+        $fields['button'] = function () {
+            return $this->button ? json_decode($this->button, true) : null;
+        };
+
+        $fields['language_code'] = function () {
+            return $this->language ? $this->language->code : null;
+        };
+
+        $fields['language_name'] = function () {
+            return $this->language ? $this->language->name : null;
         };
 
         $fields['image'] = function () {
@@ -139,12 +143,12 @@ class ProductImage extends ActiveRecord
 
     public function extraFields()
     {
-        return ['product', 'image'];
+        return ['language'];
     }
 
-    public function getProduct()
+    public function getLanguage()
     {
-        return $this->hasOne(Product::class, ['id' => 'product_id']);
+        return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
 
     public function getImage()
@@ -152,22 +156,14 @@ class ProductImage extends ActiveRecord
         return $this->hasOne(File::class, ['id' => 'image_id']);
     }
 
-    public function afterSave($insert, $changedAttributes)
+    public function beforeSave($insert)
     {
-        parent::afterSave($insert, $changedAttributes);
-
-        if ($this->is_primary == self::IS_PRIMARY_YES) {
-            // Boshqa rasmlarni is_primary=0 qilish
-            self::updateAll(
-                ['is_primary' => self::IS_PRIMARY_NO],
-                ['and', ['product_id' => $this->product_id], ['!=', 'id', $this->id]]
-            );
-
-            // Mahsulotning image_id sini yangilash
-            Product::updateAll(
-                ['image_id' => $this->image_id],
-                ['id' => $this->product_id]
-            );
+        if (parent::beforeSave($insert)) {
+            if (is_array($this->button)) {
+                $this->button = json_encode($this->button, JSON_UNESCAPED_UNICODE);
+            }
+            return true;
         }
+        return false;
     }
 }

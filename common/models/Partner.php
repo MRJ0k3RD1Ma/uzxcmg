@@ -5,38 +5,30 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
-use yii\behaviors\SluggableBehavior;
 use yii\db\Expression;
 
 /**
- * Article model
+ * Partner model
  *
  * @property int $id
- * @property string $slug
+ * @property int $language_id
  * @property string $name
- * @property int $navigation_id
- * @property string $description
- * @property string $detail
- * @property int $show_counter
- * @property string $publish_date
+ * @property int $image_id
  * @property int $status
  * @property string $created
  * @property string $updated
- * @property int $language_id
- * @property int $image_id
  *
- * @property Navigation $navigation
  * @property Language $language
  * @property File $image
  */
-class Article extends ActiveRecord
+class Partner extends ActiveRecord
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
     public static function tableName()
     {
-        return '{{%article}}';
+        return '{{%partner}}';
     }
 
     public function behaviors()
@@ -48,29 +40,17 @@ class Article extends ActiveRecord
                 'updatedAtAttribute' => 'updated',
                 'value' => new Expression('NOW()'),
             ],
-            [
-                'class' => SluggableBehavior::class,
-                'attribute' => 'name',
-                'slugAttribute' => 'slug',
-                'ensureUnique' => true,
-                'immutable' => false,
-            ],
         ];
     }
 
     public function rules()
     {
         return [
-            [['name', 'navigation_id', 'description'], 'required'],
-            [['name', 'slug'], 'string', 'max' => 255],
-            [['description'], 'string'],
-            [['detail'], 'string'],
-            [['navigation_id', 'show_counter', 'status', 'language_id', 'image_id'], 'integer'],
+            [['name', 'language_id'], 'required'],
+            [['name'], 'string', 'max' => 255],
+            [['language_id', 'image_id', 'status'], 'integer'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['show_counter', 'default', 'value' => 0],
-            ['publish_date', 'safe'],
             ['status', 'in', 'range' => [self::STATUS_INACTIVE, self::STATUS_ACTIVE]],
-            ['navigation_id', 'exist', 'skipOnError' => true, 'targetClass' => Navigation::class, 'targetAttribute' => ['navigation_id' => 'id']],
             ['language_id', 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
             ['image_id', 'exist', 'skipOnError' => true, 'targetClass' => File::class, 'targetAttribute' => ['image_id' => 'id']],
         ];
@@ -80,18 +60,12 @@ class Article extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'slug' => 'Slug',
             'name' => 'Nomi',
-            'navigation_id' => 'Navigatsiya',
-            'description' => 'Tavsif',
-            'detail' => 'Batafsil',
-            'show_counter' => 'Ko\'rishlar soni',
-            'publish_date' => 'Nashr sanasi',
+            'language_id' => 'Til',
+            'image_id' => 'Rasm',
             'status' => 'Status',
             'created' => 'Yaratilgan',
             'updated' => 'Yangilangan',
-            'language_id' => 'Til',
-            'image_id' => 'Rasm',
         ];
     }
 
@@ -99,7 +73,7 @@ class Article extends ActiveRecord
     {
         $fields = parent::fields();
 
-        unset($fields['created'], $fields['updated'], $fields['language_id'], $fields['navigation_id'], $fields['image_id']);
+        unset($fields['created'], $fields['updated'], $fields['language_id'], $fields['image_id']);
         $fields['created_at'] = 'created';
         $fields['updated_at'] = 'updated';
 
@@ -115,29 +89,11 @@ class Article extends ActiveRecord
             return $this->language ? $this->language->name : null;
         };
 
-        $fields['navigation'] = function () {
-            return $this->getNavigationData();
-        };
-
         $fields['image'] = function () {
             return $this->getImageData();
         };
 
         return $fields;
-    }
-
-    protected function getNavigationData()
-    {
-        $navigation = $this->navigation;
-        if (!$navigation) {
-            return null;
-        }
-
-        return [
-            'id' => $navigation->id,
-            'name' => $navigation->name,
-            'slug' => $navigation->slug,
-        ];
     }
 
     protected function getImageData()
@@ -159,11 +115,6 @@ class Article extends ActiveRecord
         return ['language'];
     }
 
-    public function getNavigation()
-    {
-        return $this->hasOne(Navigation::class, ['id' => 'navigation_id']);
-    }
-
     public function getLanguage()
     {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
@@ -172,10 +123,5 @@ class Article extends ActiveRecord
     public function getImage()
     {
         return $this->hasOne(File::class, ['id' => 'image_id']);
-    }
-
-    public function incrementCounter()
-    {
-        $this->updateCounters(['show_counter' => 1]);
     }
 }

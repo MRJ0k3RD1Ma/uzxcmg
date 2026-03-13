@@ -55,9 +55,13 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                // Swagger
+                'swagger' => 'swagger/index',
+                'swagger/json' => 'swagger/json',
                 // OPTIONS preflight uchun
                 'OPTIONS <url:.*>' => 'site/options',
                 ''=>'site/index',
+                'home'=>'home/<language:[w-]+>',
                 'GET v1/getfile/<slug:[\w-]+>' => 'site/file',
                 'POST v1/admin-auth/login' => 'v1/admin-auth/login',
                 'POST v1/admin-auth/refresh' => 'v1/admin-auth/refresh',
@@ -66,7 +70,15 @@ return [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'pluralize' => false,
-                    'controller' => ['v1/admin-role', 'v1/admin', 'v1/brand', 'v1/article', 'v1/language'],
+                    'controller' => ['v1/admin-role', 'v1/admin', 'v1/brand', 'v1/article', 'v1/language', 'v1/partner', 'v1/banner'],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'pluralize' => false,
+                    'controller' => ['v1/setting'],
+                    'extraPatterns' => [
+                        'GET by-language' => 'by-language',
+                    ],
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',

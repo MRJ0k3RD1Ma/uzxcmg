@@ -8,9 +8,18 @@ use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\Cors;
 use common\models\LoginForm;
+use common\models\Language;
+use common\models\Navigation;
+use common\models\Banner;
+use common\models\Partner;
+use common\models\Category;
+use common\models\Setting;
+use common\models\Article;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -21,12 +30,17 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    public $enableCsrfValidation = false;
+
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
+            'cors' => [
+                'class' => Cors::class,
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'only' => ['logout', 'signup'],
@@ -255,5 +269,133 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    /**
+     * OPTIONS preflight request uchun
+     */
+    public function actionOptions()
+    {
+        Yii::$app->response->statusCode = 200;
+        return '';
+    }
+
+    /**
+     * Home page data - public API
+     * GET /site/home?language=uz
+     *
+     * @param string $language Til kodi (uz, ru, en)
+     * @return array
+     */
+    public function actionHome($language = 'uz')
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Tilni topish
+        $languageModel = Language::findOne(['code' => $language, 'status' => Language::STATUS_ACTIVE]);
+
+        if (!$languageModel) {
+            Yii::$app->response->statusCode = 404;
+            return [
+                'success' => false,
+                'message' => "Til topilmadi: $language",
+            ];
+        }
+
+        $languageId = $languageModel->id;
+
+        // Navigatsiyalar (tree structure)
+        $navigations = Navigation::find()
+            ->where(['language_id' => $languageId, 'status' => Navigation::STATUS_ACTIVE, 'parent_id' => null])
+            ->with(['image', 'children' => function ($query) {
+                $query->where(['status' => Navigation::STATUS_ACTIVE])
+                    ->orderBy(['sort_order' => SORT_ASC]);
+            }])
+            ->orderBy(['sort_order' => SORT_ASC])
+            ->all();
+
+        // Bannerlar
+        $banners = Banner::find()
+            ->where(['language_id' => $languageId, 'status' => Banner::STATUS_ACTIVE])
+            ->with(['image'])
+            ->all();
+
+        // Hamkorlar
+        $partners = Partner::find()
+            ->where(['language_id' => $languageId, 'status' => Partner::STATUS_ACTIVE])
+            ->with(['image'])
+            ->all();
+
+        // Kategoriyalar (tree structure)
+        $categories = Category::find()
+            ->where(['language_id' => $languageId, 'status' => Category::STATUS_ACTIVE, 'parent_id' => null])
+            ->with(['image', 'children' => function ($query) {
+                $query->where(['status' => Category::STATUS_ACTIVE])
+                    ->orderBy(['sort_order' => SORT_ASC]);
+            }])
+            ->orderBy(['sort_order' => SORT_ASC])
+            ->all();
+
+        // Sozlamalar
+        $setting = Setting::find()
+            ->where(['language_id' => $languageId])
+            ->with(['logoOrginal', 'logoWhite'])
+            ->one();
+
+        // 4 ta so'nggi maqola
+        $articles = Article::find()
+            ->where(['language_id' => $languageId, 'status' => Article::STATUS_ACTIVE])
+            ->with(['image', 'navigation'])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(4)
+            ->all();
+
+        return [
+            'success' => true,
+            'language' => [
+                'code' => $languageModel->code,
+                'name' => $languageModel->name,
+            ],
+            'navigations' => $this->formatNavigations($navigations),
+            'banners' => $banners,
+            'partners' => $partners,
+            'categories' => $this->formatCategories($categories),
+            'setting' => $setting,
+            'articles' => $articles,
+        ];
+    }
+
+    /**
+     * Navigatsiyalarni formatlash (children bilan)
+     */
+    protected function formatNavigations($navigations)
+    {
+        $result = [];
+        foreach ($navigations as $nav) {
+            $item = $nav->toArray();
+            $item['children'] = [];
+            foreach ($nav->children as $child) {
+                $item['children'][] = $child->toArray();
+            }
+            $result[] = $item;
+        }
+        return $result;
+    }
+
+    /**
+     * Kategoriyalarni formatlash (children bilan)
+     */
+    protected function formatCategories($categories)
+    {
+        $result = [];
+        foreach ($categories as $cat) {
+            $item = $cat->toArray();
+            $item['children'] = [];
+            foreach ($cat->children as $child) {
+                $item['children'][] = $child->toArray();
+            }
+            $result[] = $item;
+        }
+        return $result;
     }
 }

@@ -164,4 +164,8 @@ class SiteController extends Controller
             'inline' => ($mode !== 'download'),
         ]);
     }
+
+
+
+
 }

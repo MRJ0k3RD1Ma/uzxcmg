@@ -15,6 +15,18 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
+        ],
+        'response' => [
+            'formatters' => [
+                \yii\web\Response::FORMAT_JSON => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                    'prettyPrint' => YII_DEBUG,
+                    'encodeOptions' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+                ],
+            ],
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -37,14 +49,17 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'OPTIONS <url:.*>' => 'site/options',
+                'GET home/<language:\w+>' => 'site/home',
+                'GET home' => 'site/home',
             ],
         ],
-        */
+
     ],
     'params' => $params,
 ];

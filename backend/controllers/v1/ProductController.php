@@ -73,13 +73,13 @@ class ProductController extends BaseController
             $expandFields = array_map('trim', explode(',', $expand));
 
             if (in_array('images', $expandFields)) {
-                $with[] = 'images';
+                $with[] = 'images.image';
             }
             if (in_array('guides', $expandFields)) {
                 $with[] = 'guides';
             }
             if (in_array('softs', $expandFields)) {
-                $with[] = 'softs';
+                $with[] = 'softs.file';
             }
         }
         $query->with($with);
@@ -120,7 +120,7 @@ class ProductController extends BaseController
     {
         $model = Product::find()
             ->where(['id' => $id])
-            ->with(['category', 'image', 'language', 'images', 'guides', 'softs'])
+            ->with(['category', 'image', 'language', 'images.image', 'guides', 'softs.file'])
             ->one();
 
         if ($model === null) {
@@ -627,7 +627,7 @@ class ProductController extends BaseController
         $request = Yii::$app->request;
         $perPage = (int)$request->get('per_page', 20);
 
-        $query = ProductImage::find()->where(['product_id' => $product_id]);
+        $query = ProductImage::find()->where(['product_id' => $product_id])->with(['image']);
 
         if (($status = $request->get('status')) !== null) {
             $query->andFilterWhere(['status' => $status]);
@@ -635,17 +635,6 @@ class ProductController extends BaseController
 
         if (($isPrimary = $request->get('is_primary')) !== null) {
             $query->andFilterWhere(['is_primary' => $isPrimary]);
-        }
-
-        if ($expand = $request->get('expand')) {
-            $expandFields = array_map('trim', explode(',', $expand));
-            $with = [];
-            if (in_array('image', $expandFields)) {
-                $with[] = 'image';
-            }
-            if (!empty($with)) {
-                $query->with($with);
-            }
         }
 
         $provider = new \yii\data\ActiveDataProvider([
@@ -683,7 +672,16 @@ class ProductController extends BaseController
     public function actionImageView($product_id, $id)
     {
         $this->findModel($product_id);
-        return $this->findImage($id, $product_id);
+        $model = ProductImage::find()
+            ->where(['id' => $id, 'product_id' => $product_id])
+            ->with(['image'])
+            ->one();
+
+        if ($model === null) {
+            throw new NotFoundHttpException("Rasm topilmadi: $id");
+        }
+
+        return $model;
     }
 
     // POST /v1/product/{product_id}/images
@@ -696,6 +694,8 @@ class ProductController extends BaseController
         $model->product_id = $product_id;
 
         if ($model->save()) {
+            $model->refresh();
+            $model->populateRelation('image', $model->image);
             Yii::$app->response->statusCode = 201;
             return $model;
         }
@@ -715,6 +715,8 @@ class ProductController extends BaseController
         $model->load(Yii::$app->request->post(), '');
 
         if ($model->save()) {
+            $model->refresh();
+            $model->populateRelation('image', $model->image);
             return $model;
         }
 
@@ -733,6 +735,8 @@ class ProductController extends BaseController
         $model->is_primary = ProductImage::IS_PRIMARY_YES;
 
         if ($model->save()) {
+            $model->refresh();
+            $model->populateRelation('image', $model->image);
             return $model;
         }
 
@@ -782,7 +786,7 @@ class ProductController extends BaseController
         $request = Yii::$app->request;
         $perPage = (int)$request->get('per_page', 20);
 
-        $query = ProductSoft::find()->where(['product_id' => $product_id]);
+        $query = ProductSoft::find()->where(['product_id' => $product_id])->with(['file']);
 
         if (($status = $request->get('status')) !== null) {
             $query->andFilterWhere(['status' => $status]);
@@ -790,17 +794,6 @@ class ProductController extends BaseController
 
         if ($search = $request->get('search')) {
             $query->andWhere(['like', 'name', $search]);
-        }
-
-        if ($expand = $request->get('expand')) {
-            $expandFields = array_map('trim', explode(',', $expand));
-            $with = [];
-            if (in_array('file', $expandFields)) {
-                $with[] = 'file';
-            }
-            if (!empty($with)) {
-                $query->with($with);
-            }
         }
 
         $provider = new \yii\data\ActiveDataProvider([
@@ -838,7 +831,16 @@ class ProductController extends BaseController
     public function actionSoftView($product_id, $id)
     {
         $this->findModel($product_id);
-        return $this->findSoft($id, $product_id);
+        $model = ProductSoft::find()
+            ->where(['id' => $id, 'product_id' => $product_id])
+            ->with(['file'])
+            ->one();
+
+        if ($model === null) {
+            throw new NotFoundHttpException("Dastur topilmadi: $id");
+        }
+
+        return $model;
     }
 
     // POST /v1/product/{product_id}/softs
@@ -851,6 +853,8 @@ class ProductController extends BaseController
         $model->product_id = $product_id;
 
         if ($model->save()) {
+            $model->refresh();
+            $model->populateRelation('file', $model->file);
             Yii::$app->response->statusCode = 201;
             return $model;
         }
@@ -870,6 +874,8 @@ class ProductController extends BaseController
         $model->load(Yii::$app->request->post(), '');
 
         if ($model->save()) {
+            $model->refresh();
+            $model->populateRelation('file', $model->file);
             return $model;
         }
 

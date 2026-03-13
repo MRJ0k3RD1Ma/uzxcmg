@@ -73,7 +73,7 @@ class ProductSoft extends ActiveRecord
     {
         $fields = parent::fields();
 
-        unset($fields['created'], $fields['updated']);
+        unset($fields['created'], $fields['updated'], $fields['file_id']);
         $fields['created_at'] = 'created';
         $fields['updated_at'] = 'updated';
 
@@ -81,7 +81,46 @@ class ProductSoft extends ActiveRecord
             return $this->status == self::STATUS_ACTIVE ? 'ACTIVE' : 'INACTIVE';
         };
 
+        $fields['file'] = function () {
+            return $this->getFileData();
+        };
+
         return $fields;
+    }
+
+    protected function getFileData()
+    {
+        $file = $this->file;
+        if (!$file) {
+            return null;
+        }
+
+        $baseUrl = '/api/v1/getfile/' . $file->slug;
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $isImage = in_array(strtolower($file->exts), $imageExtensions);
+
+        $data = [
+            'id' => $file->id,
+            'name' => $file->name,
+            'slug' => $file->slug,
+            'exts' => $file->exts,
+            'download_url' => $baseUrl,
+        ];
+
+        if ($isImage) {
+            $data['download'] = [
+                'sm' => $baseUrl . '?size=sm',
+                'md' => $baseUrl . '?size=md',
+                'lg' => $baseUrl . '?size=lg',
+            ];
+            $data['url'] = [
+                'sm' => $file->getSmallUrl(),
+                'md' => $file->getMediumUrl(),
+                'lg' => $file->getOriginalUrl(),
+            ];
+        }
+
+        return $data;
     }
 
     public function extraFields()
