@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 07, 2026 at 08:26 PM
+-- Generation Time: Mar 14, 2026 at 10:08 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -45,7 +45,8 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `name`, `username`, `password`, `phone`, `role_id`, `status`, `created`, `updated`) VALUES
 (1, 'Adminbek', 'admin', '$2y$13$u0QV0cVlVIya1TbQ9ncHS.8lnq4ApCBuMqDPQiQB6BXWCVOF0D5xO', '+998901234567', 1, 1, '2026-02-10 22:16:25', '2026-02-14 19:39:08'),
-(2, 'Adminbek', 'adminbek', '$2y$13$2spzrrmqDIuUsVzSTR.YZeN5tfkwkX3rIL5HoOxlgvobPjMDyrgse', '+998901234567', 1, 1, '2026-02-12 18:49:01', '2026-02-12 18:49:01');
+(2, 'Adminbek', 'adminbek', '$2y$13$2spzrrmqDIuUsVzSTR.YZeN5tfkwkX3rIL5HoOxlgvobPjMDyrgse', '+998901234567', 1, 1, '2026-02-12 18:49:01', '2026-02-12 18:49:01'),
+(3, 'Adminbek', 'adminjon', '$2y$13$4RTT0.gdmOzSYogXIRurbOp7ez.yo7SYPl6sOX3GRY/FQpVWfin3K', '+998901234567', 1, 0, '2026-03-09 12:43:24', '2026-03-09 12:44:01');
 
 -- --------------------------------------------------------
 
@@ -86,17 +87,38 @@ CREATE TABLE `article` (
   `status` int(11) DEFAULT 1,
   `created` datetime DEFAULT current_timestamp(),
   `updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `language_id` int(11) DEFAULT NULL
+  `language_id` int(11) DEFAULT NULL,
+  `image_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `article`
 --
 
-INSERT INTO `article` (`id`, `slug`, `name`, `navigation_id`, `description`, `detail`, `show_counter`, `publish_date`, `status`, `created`, `updated`, `language_id`) VALUES
-(1, 'maqola-nomi-222', 'Maqola nomi 222', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-02 22:45:40', '2026-03-08 00:08:21', 1),
-(2, 'maqola-nomi', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-08 00:06:19', '2026-03-08 00:06:19', NULL),
-(3, 'maqola-nomi-2', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-08 00:07:44', '2026-03-08 00:07:44', 1);
+INSERT INTO `article` (`id`, `slug`, `name`, `navigation_id`, `description`, `detail`, `show_counter`, `publish_date`, `status`, `created`, `updated`, `language_id`, `image_id`) VALUES
+(1, 'maqola-nomi-222', 'Maqola nomi 222', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 0, '2026-03-02 22:45:40', '2026-03-09 12:49:14', 1, NULL),
+(2, 'maqola-nomi', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-08 00:06:19', '2026-03-08 00:06:19', NULL, NULL),
+(3, 'maqola-nomi-2', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-08 00:07:44', '2026-03-08 00:07:44', 1, NULL),
+(4, 'maqola-nomi-3', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>Batafsil ma\'lumot o\'zbek tilida</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-09 12:48:31', '2026-03-09 12:48:31', 1, NULL),
+(5, 'maqola-nomi-4', 'Maqola nomi', 1, 'Qisqacha tavsif o\'zbek tilida', '<p>dfhfgh</p>', 0, '2026-03-02 10:00:00', 1, '2026-03-09 16:14:37', '2026-03-13 22:58:43', 1, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `banner`
+--
+
+CREATE TABLE `banner` (
+  `id` int(11) NOT NULL,
+  `language_id` int(11) NOT NULL,
+  `image_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `button` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`button`)),
+  `status` int(11) DEFAULT 1,
+  `created` datetime DEFAULT current_timestamp(),
+  `updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -125,7 +147,7 @@ CREATE TABLE `category` (
 
 INSERT INTO `category` (`id`, `parent_id`, `name`, `slug`, `icon`, `image_id`, `spec_template`, `sort_order`, `status`, `created`, `updated`, `language_id`) VALUES
 (1, NULL, 'Test', 'test', 'icon', 5, NULL, 1, 1, '2026-02-14 00:11:44', '2026-03-07 23:47:56', 1),
-(2, NULL, 'testnasmeasa', 'testnasmeasa', '', 1, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-02-14 00:12:14', '2026-03-07 23:47:57', 2),
+(2, NULL, 'testnasmeasa', 'testnasmeasa', '', 1, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 0, '2026-02-14 00:12:14', '2026-03-09 12:47:24', 2),
 (3, NULL, 'testnasme', NULL, '', 1, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-02-14 20:58:56', '2026-03-07 23:47:58', 1),
 (4, NULL, 'testnasme', 'testnasme', 'icon', 2, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-02-15 22:14:20', '2026-03-07 23:47:59', 1),
 (5, NULL, 'Protsessor111', 'protsessor111', 'Icon Name', 15, '\"{\\\"fields\\\":[{\\\"key\\\":\\\"key\\\",\\\"label_uz\\\":\\\"Yadro\\\",\\\"label_ru\\\":\\\"Yadro\\\",\\\"type\\\":\\\"number\\\"}]}\"', 1, 1, '2026-02-17 11:54:02', '2026-03-07 23:47:28', 1),
@@ -134,7 +156,9 @@ INSERT INTO `category` (`id`, `parent_id`, `name`, `slug`, `icon`, `image_id`, `
 (8, NULL, 'new', 'new', 'new', 17, '\"{\\\"fields\\\":[]}\"', 0, 1, '2026-02-17 12:56:22', '2026-03-07 23:47:33', 1),
 (9, 5, 'new', 'new-2', 'new', NULL, '\"{\\\"fields\\\":[]}\"', 0, 1, '2026-02-17 13:12:13', '2026-03-07 23:47:34', 1),
 (10, NULL, 'testnasme', 'testnasme-2', 'icon', 3, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-03-07 23:43:15', '2026-03-07 23:47:02', 1),
-(11, NULL, 'testnasme', 'testnasme-3', 'icon', 3, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-03-07 23:45:10', '2026-03-07 23:45:10', 1);
+(11, NULL, 'testnasme', 'testnasme-3', 'icon', 3, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-03-07 23:45:10', '2026-03-07 23:45:10', 1),
+(12, NULL, 'testnasme', 'testnasme-4', 'icon', 3, '\"{\\\"a\\\":\\\"b\\\"}\"', 1, 1, '2026-03-09 12:46:46', '2026-03-09 12:46:46', 1),
+(13, NULL, 'Ruskiy Categories', 'ruskiy-categories', NULL, NULL, '\"{\\\"fields\\\":[]}\"', 1, 1, '2026-03-12 21:46:28', '2026-03-12 21:46:28', 2);
 
 -- --------------------------------------------------------
 
@@ -176,7 +200,20 @@ INSERT INTO `files` (`id`, `name`, `slug`, `exts`, `url`, `status`, `created`, `
 (16, 'ChatGPT Image 21 окт. 2025 г., 15_37_43', 'chatgpt-image-21-2025-153743-6', 'png', '{\"original\":\"/upload/files/1771311285_qD_cB_uk.png\",\"small\":\"/upload/files/1771311285_qD_cB_uk_small.png\",\"medium\":\"/upload/files/1771311285_qD_cB_uk_medium.png\"}', 1, '2026-02-17 11:54:46', '2026-02-17 11:54:46'),
 (17, 'ChatGPT Image 21 окт. 2025 г., 15_37_43', 'chatgpt-image-21-2025-153743-7', 'png', '{\"original\":\"/upload/files/1771314972_TE8qPqy9.png\",\"small\":\"/upload/files/1771314972_TE8qPqy9_small.png\",\"medium\":\"/upload/files/1771314972_TE8qPqy9_medium.png\"}', 1, '2026-02-17 12:56:13', '2026-02-17 12:56:13'),
 (18, 'ghost-modern-2560x1440-10953', 'ghost-modern-2560x1440-10953', 'jpg', '{\"original\":\"/upload/files/1771326296_WaJFArPf.jpg\",\"small\":\"/upload/files/1771326296_WaJFArPf_small.jpg\",\"medium\":\"/upload/files/1771326296_WaJFArPf_medium.jpg\"}', 1, '2026-02-17 16:04:56', '2026-02-17 16:04:56'),
-(19, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'jpg', '{\"original\":\"/upload/files/1771326314_ElY32Uu7.jpg\",\"small\":\"/upload/files/1771326314_ElY32Uu7_small.jpg\",\"medium\":\"/upload/files/1771326314_ElY32Uu7_medium.jpg\"}', 1, '2026-02-17 16:05:14', '2026-02-17 16:05:14');
+(19, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'jpg', '{\"original\":\"/upload/files/1771326314_ElY32Uu7.jpg\",\"small\":\"/upload/files/1771326314_ElY32Uu7_small.jpg\",\"medium\":\"/upload/files/1771326314_ElY32Uu7_medium.jpg\"}', 1, '2026-02-17 16:05:14', '2026-02-17 16:05:14'),
+(20, 'ChatGPT Image 21 окт. 2025 г., 18_31_43', 'chatgpt-image-21-2025-183143', 'png', '{\"original\":\"/upload/files/1773415941_zZ_APoxx.png\",\"small\":\"/upload/files/1773415941_zZ_APoxx_small.png\",\"medium\":\"/upload/files/1773415941_zZ_APoxx_medium.png\"}', 1, '2026-03-13 20:32:22', '2026-03-13 20:32:22'),
+(21, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058-2', 'jpg', '{\"original\":\"/upload/files/1773416247_6tqmu6oZ.jpg\",\"small\":\"/upload/files/1773416247_6tqmu6oZ_small.jpg\",\"medium\":\"/upload/files/1773416247_6tqmu6oZ_medium.jpg\"}', 1, '2026-03-13 20:37:28', '2026-03-13 20:37:28'),
+(22, 'ghost-modern-2560x1440-10953', 'ghost-modern-2560x1440-10953-2', 'jpg', '{\"original\":\"/upload/files/1773416454_VniMc2rR.jpg\",\"small\":\"/upload/files/1773416454_VniMc2rR_small.jpg\",\"medium\":\"/upload/files/1773416454_VniMc2rR_medium.jpg\"}', 1, '2026-03-13 20:40:54', '2026-03-13 20:40:54'),
+(23, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058-3', 'jpg', '{\"original\":\"/upload/files/1773416551_KUCursOx.jpg\",\"small\":\"/upload/files/1773416551_KUCursOx_small.jpg\",\"medium\":\"/upload/files/1773416551_KUCursOx_medium.jpg\"}', 1, '2026-03-13 20:42:31', '2026-03-13 20:42:31'),
+(24, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058-4', 'jpg', '{\"original\":\"/upload/files/1773416668_KZSnyROn.jpg\",\"small\":\"/upload/files/1773416668_KZSnyROn_small.jpg\",\"medium\":\"/upload/files/1773416668_KZSnyROn_medium.jpg\"}', 1, '2026-03-13 20:44:28', '2026-03-13 20:44:28'),
+(25, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058-5', 'jpg', '{\"original\":\"/upload/files/1773417623_sHxtultw.jpg\",\"small\":\"/upload/files/1773417623_sHxtultw_small.jpg\",\"medium\":\"/upload/files/1773417623_sHxtultw_medium.jpg\"}', 1, '2026-03-13 21:00:23', '2026-03-13 21:00:23'),
+(26, 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058', 'windows-11-stock-red-abstract-black-background-amoled-2560x1440-9058-6', 'jpg', '{\"original\":\"/upload/files/1773417879_0EMQfTar.jpg\",\"small\":\"/upload/files/1773417879_0EMQfTar_small.jpg\",\"medium\":\"/upload/files/1773417879_0EMQfTar_medium.jpg\"}', 1, '2026-03-13 21:04:39', '2026-03-13 21:04:39'),
+(27, 'Screenshot_2026-03-13_19-56-10', 'screenshot2026-03-1319-56-10', 'jpg', '{\"original\":\"/upload/files/1773420436_7HL0zAu8.jpg\",\"small\":\"/upload/files/1773420436_7HL0zAu8_small.jpg\",\"medium\":\"/upload/files/1773420436_7HL0zAu8_medium.jpg\"}', 1, '2026-03-13 21:47:16', '2026-03-13 21:47:16'),
+(28, 'Screenshot_2026-03-12_22-14-45', 'screenshot2026-03-1222-14-45', 'jpg', '{\"original\":\"/upload/files/1773420441_mVqgFMev.jpg\",\"small\":\"/upload/files/1773420441_mVqgFMev_small.jpg\",\"medium\":\"/upload/files/1773420441_mVqgFMev_medium.jpg\"}', 1, '2026-03-13 21:47:21', '2026-03-13 21:47:21'),
+(29, 'tron-le-aAn-_iTks4E-unsplash', 'tron-le-aan-itks4e-unsplash', 'jpg', '{\"original\":\"/upload/files/1773420836_Bx22Fd6M.jpg\",\"small\":\"/upload/files/1773420836_Bx22Fd6M_small.jpg\",\"medium\":\"/upload/files/1773420836_Bx22Fd6M_medium.jpg\"}', 1, '2026-03-13 21:53:56', '2026-03-13 21:53:56'),
+(30, 'Screenshot_2026-03-12_22-14-45', 'screenshot2026-03-1222-14-45-2', 'jpg', '{\"original\":\"/upload/files/1773420839_82PUM9rh.jpg\",\"small\":\"/upload/files/1773420839_82PUM9rh_small.jpg\",\"medium\":\"/upload/files/1773420839_82PUM9rh_medium.jpg\"}', 1, '2026-03-13 21:53:59', '2026-03-13 21:53:59'),
+(31, 'tron-le-aAn-_iTks4E-unsplash', 'tron-le-aan-itks4e-unsplash-2', 'jpg', '{\"original\":\"/upload/files/1773420884_HmIFSFvr.jpg\",\"small\":\"/upload/files/1773420884_HmIFSFvr_small.jpg\",\"medium\":\"/upload/files/1773420884_HmIFSFvr_medium.jpg\"}', 1, '2026-03-13 21:54:44', '2026-03-13 21:54:44'),
+(32, 'tron-le-aAn-_iTks4E-unsplash', 'tron-le-aan-itks4e-unsplash-3', 'jpg', '{\"original\":\"/upload/files/1773420887_Ap1FHJt-.jpg\",\"small\":\"/upload/files/1773420887_Ap1FHJt-_small.jpg\",\"medium\":\"/upload/files/1773420887_Ap1FHJt-_medium.jpg\"}', 1, '2026-03-13 21:54:47', '2026-03-13 21:54:47');
 
 -- --------------------------------------------------------
 
@@ -200,7 +237,8 @@ CREATE TABLE `language` (
 
 INSERT INTO `language` (`id`, `name`, `code`, `status`, `created`, `updated`, `icon_id`) VALUES
 (1, 'O\'zbek', 'uz', 1, '2026-03-07 23:28:03', '2026-03-07 23:28:03', NULL),
-(2, 'Русскый', 'ru', 1, '2026-03-07 23:29:16', '2026-03-07 23:29:16', NULL);
+(2, 'Русскый', 'ru', 1, '2026-03-07 23:29:16', '2026-03-07 23:29:16', NULL),
+(3, 'English', 'en', 1, '2026-03-09 21:31:53', '2026-03-09 21:32:20', NULL);
 
 -- --------------------------------------------------------
 
@@ -230,9 +268,26 @@ CREATE TABLE `navigation` (
 --
 
 INSERT INTO `navigation` (`id`, `name`, `slug`, `icon`, `image_id`, `template`, `parent_id`, `sort_order`, `status`, `created`, `updated`, `language_id`, `category_id`, `extra_url`) VALUES
-(1, 'testnasmeasa', 'testnasmeasa', '', 1, '', NULL, 1, 1, '2026-03-02 22:33:34', '2026-03-07 23:29:38', 1, NULL, NULL),
-(2, 'testnasmeasa', 'testnasmeasa-2', '', 1, '', 1, 1, 1, '2026-03-02 22:34:30', '2026-03-07 23:34:09', 2, NULL, NULL),
-(3, 'Uzbekcha nimadir', 'uzbekcha-nimadir', 'icon', 3, '', NULL, 1, 1, '2026-03-07 23:33:37', '2026-03-07 23:33:37', 1, NULL, NULL);
+(1, 'testnasmeasa', 'testnasmeasa', '', 1, 'LIST', NULL, 1, 1, '2026-03-02 22:33:34', '2026-03-13 22:58:43', 1, NULL, NULL),
+(2, 'testnasmeasa', 'testnasmeasa-2', '', 1, 'SINGLE', 1, 1, 1, '2026-03-02 22:34:30', '2026-03-09 15:56:47', 2, NULL, NULL),
+(3, 'Uzbekcha nimadir', 'uzbekcha-nimadir', 'icon', 3, 'SINGLE', NULL, 1, 1, '2026-03-07 23:33:37', '2026-03-09 15:56:44', 1, NULL, NULL),
+(4, 'testnasmeasa', 'testnasmeasa-3', '', 1, 'SINGLE', 1, 1, 0, '2026-03-09 12:44:57', '2026-03-09 12:45:31', 2, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `partner`
+--
+
+CREATE TABLE `partner` (
+  `id` int(11) NOT NULL,
+  `language_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `image_id` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT 1,
+  `created` datetime DEFAULT current_timestamp(),
+  `updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -274,7 +329,8 @@ INSERT INTO `product` (`id`, `category_id`, `name`, `slug`, `description`, `sku`
 (8, 1, '', 'iphone-16-pro-max-2', NULL, '5068771413', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-02-24 23:44:06', '2026-02-24 23:44:06', 17, 5, NULL),
 (9, 1, '', 'iphone-16-pro-max-3', NULL, '5151898237', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-02-25 22:29:11', '2026-02-25 22:29:11', 17, 5, NULL),
 (10, 1, 'iPhone 16 Pro Max', 'iphone-16-pro-max-4', 'Apple kompaniyasining eng so\'nggi smartfoni', 'UZ-IPHON-N7TILXE', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-03-08 00:02:43', '2026-03-08 00:02:43', 17, 5, 1),
-(11, 1, 'iPhone 16 Pro Max', 'iphone-16-pro-max-5', 'Apple kompaniyasining eng so\'nggi smartfoni', 'UZ-IPHON-C7CLGJO', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-03-08 00:04:57', '2026-03-08 00:04:57', 17, 5, 1);
+(11, 1, 'iPhone 16 Pro Max', 'iphone-16-pro-max-5', 'Apple kompaniyasining eng so\'nggi smartfoni', 'UZ-IPHON-C7CLGJO', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-03-08 00:04:57', '2026-03-08 00:04:57', 17, 5, 1),
+(12, 12, 'iPhone 16 Pro Max', 'iphone-16-pro-max-6', 'Apple kompaniyasining eng so\'nggi smartfoni', 'UZ-IPHON-LTS9G50', 15000000, 14500000, '2024-12-31 23:59:59', NULL, 50, 1, 1, 'iPhone 15 Pro Max sotib olish', 'iPhone 15 Pro Max eng arzon narxda', '2026-03-09 12:50:04', '2026-03-13 20:18:52', 17, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -318,7 +374,9 @@ INSERT INTO `product_guides` (`id`, `product_id`, `has_video`, `title`, `content
 (15, 10, 1, 'Qutidan chiqarish', NULL, 1, 1, 1, '2026-03-08 00:02:43', '2026-03-08 00:02:43', 'qutidan-chiqarish-6'),
 (16, 10, 0, 'Dastlabki sozlash', NULL, NULL, 2, 1, '2026-03-08 00:02:43', '2026-03-08 00:02:43', 'dastlabki-sozlash-7'),
 (17, 11, 1, 'Qutidan chiqarish', 'Telefonni qutidan ehtiyotkorlik bilan chiqaring', 1, 1, 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 'qutidan-chiqarish-7'),
-(18, 11, 0, 'Dastlabki sozlash', 'Telefonni yoqing va Apple ID bilan kiring', NULL, 2, 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 'dastlabki-sozlash-8');
+(18, 11, 0, 'Dastlabki sozlash', 'Telefonni yoqing va Apple ID bilan kiring', NULL, 2, 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 'dastlabki-sozlash-8'),
+(19, 12, 1, 'Qutidan chiqarish', 'Telefonni qutidan ehtiyotkorlik bilan chiqaring', 1, 1, 1, '2026-03-09 12:50:04', '2026-03-09 12:50:04', 'qutidan-chiqarish-8'),
+(20, 12, 0, 'Dastlabki sozlash', 'Telefonni yoqing va Apple ID bilan kiring', NULL, 2, 1, '2026-03-09 12:50:04', '2026-03-09 12:50:04', 'dastlabki-sozlash-9');
 
 -- --------------------------------------------------------
 
@@ -360,7 +418,9 @@ INSERT INTO `product_image` (`id`, `product_id`, `image_id`, `alt_text`, `sort_o
 (15, 10, 17, 'iPhone 15 Pro Max old tomoni', 1, 1, '2026-03-08 00:02:43', '2026-03-08 00:02:43', 1),
 (16, 10, 16, 'iPhone 15 Pro Max orqa tomoni', 2, 0, '2026-03-08 00:02:43', '2026-03-08 00:02:43', 1),
 (17, 11, 17, 'iPhone 15 Pro Max old tomoni', 1, 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 1),
-(18, 11, 16, 'iPhone 15 Pro Max orqa tomoni', 2, 0, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 1);
+(18, 11, 16, 'iPhone 15 Pro Max orqa tomoni', 2, 0, '2026-03-08 00:04:57', '2026-03-08 00:04:57', 1),
+(19, 12, 17, 'iPhone 15 Pro Max old tomoni', 1, 1, '2026-03-09 12:50:04', '2026-03-09 12:50:04', 1),
+(20, 12, 16, 'iPhone 15 Pro Max orqa tomoni', 2, 0, '2026-03-09 12:50:04', '2026-03-09 12:50:04', 1);
 
 -- --------------------------------------------------------
 
@@ -383,12 +443,12 @@ CREATE TABLE `product_soft` (
 --
 
 INSERT INTO `product_soft` (`id`, `file_id`, `product_id`, `name`, `status`, `created`, `updated`) VALUES
-(1, 2, 5, 'iPhone Driver v2.0', 0, '2026-02-17 16:04:51', '2026-02-17 16:08:30'),
-(2, 1, 5, 'iTunes Setup', 0, '2026-02-17 16:04:51', '2026-02-17 16:07:05'),
-(3, 2, 5, 'iPhone Driver v1.0', 0, '2026-02-17 16:07:05', '2026-02-17 16:07:16'),
-(4, 1, 5, 'iTunes Setup', 0, '2026-02-17 16:07:05', '2026-02-17 16:07:16'),
-(5, 2, 5, 'iPhone Driver v1.0', 0, '2026-02-17 16:07:16', '2026-02-17 16:08:30'),
-(6, 1, 5, 'iTunes Setup', 0, '2026-02-17 16:07:16', '2026-02-17 16:08:30'),
+(1, 2, 5, 'iPhone Driver v2.0', 1, '2026-02-17 16:04:51', '2026-03-13 20:34:54'),
+(2, 1, 5, 'iTunes Setup', 1, '2026-02-17 16:04:51', '2026-03-13 20:34:57'),
+(3, 2, 5, 'iPhone Driver v1.0', 1, '2026-02-17 16:07:05', '2026-03-13 20:34:58'),
+(4, 1, 5, 'iTunes Setup', 1, '2026-02-17 16:07:05', '2026-03-13 20:34:59'),
+(5, 2, 5, 'iPhone Driver v1.0', 1, '2026-02-17 16:07:16', '2026-03-13 20:35:00'),
+(6, 1, 5, 'iTunes Setup', 1, '2026-02-17 16:07:16', '2026-03-13 20:35:01'),
 (7, 3, 5, 'Yangi dastur', 1, '2026-02-17 16:08:30', '2026-02-17 16:08:30'),
 (8, 2, 5, 'iPhone Driver v1.0', 1, '2026-02-21 20:46:59', '2026-02-21 20:47:40'),
 (9, 2, 7, 'iPhone Driver v1.0', 1, '2026-02-21 21:01:01', '2026-02-21 21:01:01'),
@@ -400,7 +460,9 @@ INSERT INTO `product_soft` (`id`, `file_id`, `product_id`, `name`, `status`, `cr
 (15, 2, 10, 'iPhone Driver v1.0', 1, '2026-03-08 00:02:43', '2026-03-08 00:02:43'),
 (16, 1, 10, 'iTunes Setup', 1, '2026-03-08 00:02:43', '2026-03-08 00:02:43'),
 (17, 2, 11, 'iPhone Driver v1.0', 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57'),
-(18, 1, 11, 'iTunes Setup', 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57');
+(18, 1, 11, 'iTunes Setup', 1, '2026-03-08 00:04:57', '2026-03-08 00:04:57'),
+(19, 2, 12, 'iPhone Driver v1.0', 1, '2026-03-09 12:50:04', '2026-03-09 12:50:04'),
+(20, 1, 12, 'iTunes Setup', 1, '2026-03-09 12:50:04', '2026-03-09 12:50:04');
 
 -- --------------------------------------------------------
 
@@ -419,6 +481,47 @@ CREATE TABLE `rating` (
   `created` datetime DEFAULT current_timestamp(),
   `updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `setting`
+--
+
+CREATE TABLE `setting` (
+  `id` int(11) NOT NULL,
+  `logo_orginal_id` int(11) DEFAULT NULL,
+  `logo_white_id` int(11) DEFAULT NULL,
+  `url_instagram` varchar(255) DEFAULT NULL,
+  `url_telegram` varchar(255) DEFAULT NULL,
+  `url_facebook` varchar(255) DEFAULT NULL,
+  `url_linkedIn` varchar(255) DEFAULT NULL,
+  `url_threads` varchar(255) DEFAULT NULL,
+  `url_discord` varchar(255) DEFAULT NULL,
+  `url_youtube` varchar(255) DEFAULT NULL,
+  `url_whatsapp` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `count_employee` int(11) DEFAULT NULL,
+  `count_delivered` int(11) DEFAULT NULL,
+  `count_product_types` int(11) DEFAULT NULL,
+  `count_international_clients` int(11) DEFAULT NULL,
+  `about_name` varchar(255) DEFAULT NULL,
+  `about_description` text DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `other_phones` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`other_phones`)),
+  `emails` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`emails`)),
+  `address` text DEFAULT NULL,
+  `language_id` int(11) DEFAULT NULL,
+  `company_name` varchar(255) DEFAULT NULL,
+  `questions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`questions`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `setting`
+--
+
+INSERT INTO `setting` (`id`, `logo_orginal_id`, `logo_white_id`, `url_instagram`, `url_telegram`, `url_facebook`, `url_linkedIn`, `url_threads`, `url_discord`, `url_youtube`, `url_whatsapp`, `phone`, `count_employee`, `count_delivered`, `count_product_types`, `count_international_clients`, `about_name`, `about_description`, `name`, `other_phones`, `emails`, `address`, `language_id`, `company_name`, `questions`) VALUES
+(1, 17, 2, 'https://instagram.com/uzxcmg', 'https://t.me/uzxcmg', 'https://facebook.com/uzxcmg', 'https://linkedin.com/company/uzxcmg', 'string', 'string', 'https://youtube.com/@uzxcmg', 'https://wa.me/998901234567', 'asdasd', 50, 1000, 100, 25, 'Biz haqimizda', 'Kompaniya haqida batafsil ma\'lumot', 'asda22', '\"[\\\"+998 90 111 22 33\\\",\\\"+998 90 444 55 66\\\"]\"', '\"[\\\"info@uzxcmg.uz\\\",\\\"sales@uzxcmg.uz\\\"]\"', 'asdas', 1, 'UZXCMG LLC', '\"[{\\\"question\\\":\\\"Yetkazib berish qancha vaqt oladi?\\\",\\\"answer\\\":\\\"1-3 ish kuni ichida\\\"},{\\\"question\\\":\\\"To\'lov qanday amalga oshiriladi?\\\",\\\"answer\\\":\\\"Naqd, karta yoki bank o\'tkazmasi orqali\\\"}]\"');
 
 --
 -- Indexes for dumped tables
@@ -444,7 +547,16 @@ ALTER TABLE `admin_role`
 ALTER TABLE `article`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_article_navigation_id` (`navigation_id`),
-  ADD KEY `FK_article_language_id` (`language_id`);
+  ADD KEY `FK_article_language_id` (`language_id`),
+  ADD KEY `FK_article_image_id` (`image_id`);
+
+--
+-- Indexes for table `banner`
+--
+ALTER TABLE `banner`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_banner_language_id` (`language_id`),
+  ADD KEY `FK_banner_image_id` (`image_id`);
 
 --
 -- Indexes for table `category`
@@ -477,6 +589,14 @@ ALTER TABLE `navigation`
   ADD KEY `FK_navigation_parent_id` (`parent_id`),
   ADD KEY `FK_navigation_language_id` (`language_id`),
   ADD KEY `FK_navigation_category_id` (`category_id`);
+
+--
+-- Indexes for table `partner`
+--
+ALTER TABLE `partner`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_partner_language_id` (`language_id`),
+  ADD KEY `FK_partner_image_id` (`image_id`);
 
 --
 -- Indexes for table `product`
@@ -523,6 +643,15 @@ ALTER TABLE `rating`
   ADD KEY `FK_rating_order_id` (`order_id`);
 
 --
+-- Indexes for table `setting`
+--
+ALTER TABLE `setting`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_setting_logo_orginal_id` (`logo_orginal_id`),
+  ADD KEY `FK_setting_logo_white_id` (`logo_white_id`),
+  ADD KEY `FK_setting_language_id` (`language_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -530,7 +659,7 @@ ALTER TABLE `rating`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `admin_role`
@@ -542,61 +671,79 @@ ALTER TABLE `admin_role`
 -- AUTO_INCREMENT for table `article`
 --
 ALTER TABLE `article`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `banner`
+--
+ALTER TABLE `banner`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `language`
 --
 ALTER TABLE `language`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `navigation`
 --
 ALTER TABLE `navigation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `partner`
+--
+ALTER TABLE `partner`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `product_guides`
 --
 ALTER TABLE `product_guides`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `product_image`
 --
 ALTER TABLE `product_image`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `product_soft`
 --
 ALTER TABLE `product_soft`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `rating`
 --
 ALTER TABLE `rating`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `setting`
+--
+ALTER TABLE `setting`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -612,8 +759,16 @@ ALTER TABLE `admin`
 -- Constraints for table `article`
 --
 ALTER TABLE `article`
+  ADD CONSTRAINT `FK_article_image_id` FOREIGN KEY (`image_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_article_language_id` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_article_navigation_id` FOREIGN KEY (`navigation_id`) REFERENCES `navigation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `banner`
+--
+ALTER TABLE `banner`
+  ADD CONSTRAINT `FK_banner_image_id` FOREIGN KEY (`image_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_banner_language_id` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `category`
@@ -636,6 +791,13 @@ ALTER TABLE `navigation`
   ADD CONSTRAINT `FK_navigation_image_id` FOREIGN KEY (`image_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_navigation_language_id` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_navigation_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `navigation` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `partner`
+--
+ALTER TABLE `partner`
+  ADD CONSTRAINT `FK_partner_image_id` FOREIGN KEY (`image_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_partner_language_id` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `product`
@@ -673,6 +835,14 @@ ALTER TABLE `rating`
   ADD CONSTRAINT `FK_rating_order_id` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_rating_product_id` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_rating_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `setting`
+--
+ALTER TABLE `setting`
+  ADD CONSTRAINT `FK_setting_language_id` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_setting_logo_orginal_id` FOREIGN KEY (`logo_orginal_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_setting_logo_white_id` FOREIGN KEY (`logo_white_id`) REFERENCES `files` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
