@@ -32,7 +32,7 @@ class SiteController extends Controller
             'class' => AccessControl::class,
             'rules' => [
                 [
-                    'actions' => ['login', 'error', 'options', 'file', 'home', 'category', 'navigation', 'article'],
+                    'actions' => ['login', 'error', 'options', 'file', 'home', 'category', 'navigation', 'article', 'article-view', 'media', 'category-products', 'product-view'],
                     'allow' => true,
                 ],
                 [
@@ -464,6 +464,192 @@ class SiteController extends Controller
 
         return [
             'data' => $navigation,
+        ];
+    }
+
+    /**
+     * Bitta maqolani slug bo'yicha olish
+     * GET /api/article/{language}/{slug}
+     *
+     * @param string $language Til kodi (uz, ru, en)
+     * @param string $slug Article slug
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionArticleView($language, $slug)
+    {
+        $languageModel = \common\models\Language::find()
+            ->where(['code' => $language, 'status' => \common\models\Language::STATUS_ACTIVE])
+            ->one();
+
+        if (!$languageModel) {
+            throw new NotFoundHttpException("Til topilmadi: $language");
+        }
+
+        $article = \common\models\Article::find()
+            ->where([
+                'slug'        => $slug,
+                'language_id' => $languageModel->id,
+                'status'      => \common\models\Article::STATUS_ACTIVE,
+            ])
+            ->with(['navigation', 'image', 'language'])
+            ->one();
+
+        if (!$article) {
+            throw new NotFoundHttpException("Maqola topilmadi: $slug");
+        }
+
+        $article->incrementCounter();
+
+        return [
+            'data' => $article,
+        ];
+    }
+
+    /**
+     * Media type slug bo'yicha medialar ro'yxatini olish
+     * GET /api/media/{slug}
+     *
+     * @param string $slug MediaType slug
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionMedia($slug)
+    {
+        $mediaType = \common\models\MediaType::find()
+            ->where(['slug' => $slug, 'status' => \common\models\MediaType::STATUS_ACTIVE])
+            ->one();
+
+        if (!$mediaType) {
+            throw new NotFoundHttpException("Media turi topilmadi: $slug");
+        }
+
+        $request = Yii::$app->request;
+        $limit = (int)$request->get('limit', 20);
+
+        $query = \common\models\Media::find()
+            ->where([
+                'type_id' => $mediaType->id,
+                'status'  => \common\models\Media::STATUS_ACTIVE,
+            ])
+            ->with(['file'])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit($limit);
+
+        return [
+            'type' => $mediaType,
+            'data' => $query->all(),
+        ];
+    }
+
+    /**
+     * Bitta productni slug bo'yicha olish
+     * GET /api/product/{language}/{slug}
+     *
+     * @param string $language Til kodi (uz, ru)
+     * @param string $slug Product slug
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionProductView($language, $slug)
+    {
+        $languageModel = \common\models\Language::find()
+            ->where(['code' => $language, 'status' => \common\models\Language::STATUS_ACTIVE])
+            ->one();
+
+        if (!$languageModel) {
+            throw new NotFoundHttpException("Til topilmadi: $language");
+        }
+
+        $product = \common\models\Product::find()
+            ->where([
+                'slug'        => $slug,
+                'language_id' => $languageModel->id,
+                'status'      => \common\models\Product::STATUS_ACTIVE,
+            ])
+            ->with(['category', 'image', 'language', 'images', 'guides', 'softs'])
+            ->one();
+
+        if (!$product) {
+            throw new NotFoundHttpException("Product topilmadi: $slug");
+        }
+
+        return [
+            'data' => $product,
+        ];
+    }
+
+    /**
+     * Kategoriyaga tegishli productlarni olish
+     * GET /api/products/{language}/{slug}
+     *
+     * @param string $language Til kodi (uz, ru)
+     * @param string $slug Category slug
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionCategoryProducts($language, $slug)
+    {
+        $languageModel = \common\models\Language::find()
+            ->where(['code' => $language, 'status' => \common\models\Language::STATUS_ACTIVE])
+            ->one();
+
+        if (!$languageModel) {
+            throw new NotFoundHttpException("Til topilmadi: $language");
+        }
+
+        $category = \common\models\Category::find()
+            ->where(['slug' => $slug, 'language_id' => $languageModel->id, 'status' => \common\models\Category::STATUS_ACTIVE])
+            ->one();
+
+        if (!$category) {
+            throw new NotFoundHttpException("Kategoriya topilmadi: $slug");
+        }
+
+        $request = Yii::$app->request;
+        $perPage  = (int)$request->get('per_page', 20);
+        $page     = max(1, (int)$request->get('page', 1));
+
+        $query = \common\models\Product::find()
+            ->where([
+                'category_id' => $category->id,
+                'language_id' => $languageModel->id,
+                'status'      => \common\models\Product::STATUS_ACTIVE,
+            ])
+            ->with(['category', 'image', 'language']);
+
+        if ($search = $request->get('search')) {
+            $query->andWhere(['or',
+                ['like', 'name', $search],
+                ['like', 'description', $search],
+                ['like', 'sku', $search],
+            ]);
+        }
+
+        if ($featured = $request->get('featured')) {
+            $query->andWhere(['featured' => (int)$featured]);
+        }
+
+        $totalItems = (clone $query)->count();
+        $totalPages = ceil($totalItems / $perPage);
+
+        $products = $query
+            ->orderBy(['id' => SORT_DESC])
+            ->limit($perPage)
+            ->offset(($page - 1) * $perPage)
+            ->all();
+
+        return [
+            'category'   => $category,
+            'data'       => $products,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page'     => $perPage,
+                'total_items'  => (int)$totalItems,
+                'total_pages'  => (int)$totalPages,
+                'has_next'     => $page < $totalPages,
+                'has_prev'     => $page > 1,
+            ],
         ];
     }
 

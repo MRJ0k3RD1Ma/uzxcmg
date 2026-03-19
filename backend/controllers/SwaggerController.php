@@ -22,7 +22,7 @@ class SwaggerController extends Controller
     }
 
     /**
-     * Swagger UI sahifasi
+     * Scalar API Reference sahifasi
      */
     public function actionIndex()
     {
@@ -36,38 +36,15 @@ class SwaggerController extends Controller
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UZXCMG API - Swagger UI</title>
-    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css">
-    <style>
-        html { box-sizing: border-box; overflow-y: scroll; }
-        *, *:before, *:after { box-sizing: inherit; }
-        body { margin: 0; background: #fafafa; }
-        .swagger-ui .topbar { display: none; }
-    </style>
+    <title>UZXCMG API</title>
 </head>
 <body>
-    <div id="swagger-ui"></div>
-    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
-    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
-    <script>
-        window.onload = function() {
-            const ui = SwaggerUIBundle({
-                url: "{$swaggerJsonUrl}",
-                dom_id: '#swagger-ui',
-                deepLinking: true,
-                presets: [
-                    SwaggerUIBundle.presets.apis,
-                    SwaggerUIStandalonePreset
-                ],
-                plugins: [
-                    SwaggerUIBundle.plugins.DownloadUrl
-                ],
-                layout: "StandaloneLayout",
-                persistAuthorization: true
-            });
-            window.ui = ui;
-        };
-    </script>
+    <script
+        id="api-reference"
+        data-url="{$swaggerJsonUrl}"
+        data-configuration='{"theme":"purple"}'
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
 </body>
 </html>
 HTML;

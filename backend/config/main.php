@@ -65,6 +65,10 @@ return [
                 'GET category/<language:[\w-]+>' => 'site/category',
                 'GET navigation/<language:[\w-]+>' => 'site/navigation',
                 'GET articles/<language:[\w-]+>/<slug:[\w-]+>' => 'site/article',
+                'GET article/<language:[\w-]+>/<slug:[\w-]+>' => 'site/article-view',
+                'GET media/<slug:[\w-]+>' => 'site/media',
+                'GET products/<language:[\w-]+>/<slug:[\w-]+>' => 'site/category-products',
+                'GET product/<language:[\w-]+>/<slug:[\w-]+>' => 'site/product-view',
                 'GET v1/getfile/<slug:[\w-]+>' => 'site/file',
                 'POST v1/admin-auth/login' => 'v1/admin-auth/login',
                 'POST v1/admin-auth/refresh' => 'v1/admin-auth/refresh',
@@ -73,7 +77,7 @@ return [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'pluralize' => false,
-                    'controller' => ['v1/admin-role', 'v1/admin', 'v1/brand', 'v1/article', 'v1/language', 'v1/partner', 'v1/banner'],
+                    'controller' => ['v1/admin-role', 'v1/admin', 'v1/brand', 'v1/article', 'v1/language', 'v1/partner', 'v1/banner', 'v1/media-type', 'v1/media'],
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
